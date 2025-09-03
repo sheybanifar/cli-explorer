@@ -9,6 +9,10 @@ class Explorer:
         cwd = ''    # current working directory
 
     @classmethod
+    def navigator(cls):
+        
+
+    @classmethod
     def run(cls):
         p = Path(cls.cwd).resolve()  
         print(p)
