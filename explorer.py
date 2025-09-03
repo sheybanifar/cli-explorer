@@ -8,9 +8,12 @@ class Explorer:
     except IndexError:
         cwd = ''    # current working directory
 
+    def _id_assign(self):
+        pass
+
     @classmethod
     def navigator(cls):
-        
+        pass
 
     @classmethod
     def run(cls):
