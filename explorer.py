@@ -8,17 +8,17 @@ class Explorer:
     except IndexError:
         cwd = ''    # current working directory
 
-    def _id_assign(self):
-        pass
+    # def _id_associate(self):
+    #     pass
 
     @classmethod
     def navigator(cls):
-        pass
+        path = Path(cls.cwd).resolve()
+        print(*path.iterdir(), sep='\n')
 
     @classmethod
     def run(cls):
-        p = Path(cls.cwd).resolve()  
-        print(p)
+        cls.navigator()
 
 explorer = Explorer()
 explorer.run()
