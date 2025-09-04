@@ -14,7 +14,8 @@ class Explorer:
     @classmethod
     def navigator(cls):
         path = Path(cls.cwd).resolve()
-        print(*path.iterdir(), sep='\n')
+        # print(*path.iterdir(), sep='\n')
+        iterpath = path.iterdir()
 
     @classmethod
     def run(cls):
