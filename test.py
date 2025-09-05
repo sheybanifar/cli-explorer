@@ -29,7 +29,7 @@ def get_size(path):
     GB = MB ** 2
     if not path.is_dir():
         size_in_bytes = path.stat().st_size
-        print(size_in_bytes)
+        # print(size_in_bytes)
         if size_in_bytes < KB:
             size = f'{size_in_bytes}B'
         elif KB <= size_in_bytes <  MB:
@@ -54,13 +54,14 @@ def get_pathname(path):
     
 Id = 1
 path_data = {}
-def yield_path():
+def yield_row():
     global Id
     for path in path_iter:
         mode = get_mode(path)
         last_modified_time = get_last_modified_time(path)
         size = get_size(path)
         name = get_pathname(path)
+        # print(Id)
         path_data[Id] = (
             mode,
             last_modified_time,
@@ -68,11 +69,18 @@ def yield_path():
             name,
         )
         Id += 1
-        yield path_data
+    yield path_data
 
-print(yield_path(), sep='\n')
-# print(row for row in yield_path())
+output = yield_row()
+
+for o in output:
+    print(*o.items(), sep='\n')
+
 # print(*path_data.items(), sep='\n')
+
+# output = next(yield_path())
+# print(output)
+# print(row for row in yield_path())
     
 # length = get_length()
 # print(length)
