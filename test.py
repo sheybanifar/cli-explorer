@@ -1,7 +1,6 @@
 from pathlib import Path
 
-path_iter = Path().resolve().iterdir()
-
+path_iter = Path('I:\\Videos\\Tutorial').resolve().iterdir()
 
 def get_length():   
     '''Get length of the directory iterator'''
@@ -20,7 +19,7 @@ def get_mode(path):
 def get_last_modified_time(path):
     '''getting the last modified time'''
     import time
-    lastModifiedTimeInSec = time.ctime(path.stat().st_mtime)
+    lastModifiedTimeInSec = time.gmtime(path.stat().st_mtime)
     lastModifiedTime = time.strftime(r'%m/%d/%Y %H:%M:%S', lastModifiedTimeInSec)
     return lastModifiedTime
 
@@ -30,11 +29,14 @@ def get_size(path):
     GB = MB ** 2
     if not path.is_dir():
         size_in_bytes = path.stat().st_size
-        if KB <= size_in_bytes <  MB:
-            size_kb = round(size_in_bytes / 1000, 1)
+        print(size_in_bytes)
+        if size_in_bytes < KB:
+            size = f'{size_in_bytes}B'
+        elif KB <= size_in_bytes <  MB:
+            size_kb = round(size_in_bytes / KB)
             size = f'{size_kb} KB'
         elif MB <= size_in_bytes <= GB:
-            size_mb = round(size_in_bytes / MB, 1)
+            size_mb = round(size_in_bytes / MB)
             size = f'{size_mb} MB'
         elif GB <= size_in_bytes:
             size_gb = round(size_in_bytes / GB, 1)
@@ -45,9 +47,32 @@ def get_size(path):
     
 def get_pathname(path):
     if path.is_dir():
-        return f'{path.name}\\'
+        pathname = path.name + '/'
+        return pathname
     else:
         return path.name
+    
+Id = 1
+path_data = {}
+def yield_path():
+    global Id
+    for path in path_iter:
+        mode = get_mode(path)
+        last_modified_time = get_last_modified_time(path)
+        size = get_size(path)
+        name = get_pathname(path)
+        path_data[Id] = (
+            mode,
+            last_modified_time,
+            size,
+            name,
+        )
+        Id += 1
+        yield path_data
+
+print(yield_path(), sep='\n')
+# print(row for row in yield_path())
+# print(*path_data.items(), sep='\n')
     
 # length = get_length()
 # print(length)
