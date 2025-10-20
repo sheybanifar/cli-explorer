@@ -20,7 +20,7 @@ def get_last_modified_time(path):
     '''getting last modified time'''
     import time
     lastModifiedTimeInSec = time.gmtime(path.stat().st_mtime)
-    lastModifiedTime = time.strftime(r'%m/%d/%Y %H:%M:%S', lastModifiedTimeInSec)
+    lastModifiedTime = time.strftime(r'%m/%d/%Y %H:%M', lastModifiedTimeInSec)
     return lastModifiedTime
 
 def get_size(path):
@@ -52,10 +52,11 @@ def get_pathname(path):
     else:
         return path.name
     
-Id = 1
+# Id = 1
 path_data = {}
 def yield_row():
-    global Id
+    # global Id
+    Id = 1
     for path in path_iter:
         mode = get_mode(path)
         last_modified_time = get_last_modified_time(path)
