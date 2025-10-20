@@ -10,14 +10,14 @@ def get_length():
     return length
 
 def get_mode(path):
-    '''look for path mode, which is either a directory or a file'''
+    '''look for path mode whether is a directory or a file'''
     if path.is_dir():
         return 'D'
     else:
         return 'F'
     
 def get_last_modified_time(path):
-    '''getting the last modified time'''
+    '''getting last modified time'''
     import time
     lastModifiedTimeInSec = time.gmtime(path.stat().st_mtime)
     lastModifiedTime = time.strftime(r'%m/%d/%Y %H:%M:%S', lastModifiedTimeInSec)
