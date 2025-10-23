@@ -53,7 +53,8 @@ def get_pathname(path):
         return path.name
     
 def yield_row():
-    path_data = []
+    path_data = [('Id', 'Mode', 'Date Modified', 'Size', 'Name'),
+                 ('--', '-'*4, '-'*13, '-'*4, '-'*4)]
     for path in path_iter:
         mode = get_mode(path)
         last_modified_time = get_last_modified_time(path)
@@ -71,11 +72,29 @@ rows = yield_row()
 
 # for o in rows:
 #     print(*o, sep='\n')
-max_value = max(col[-1] for row in rows for col in row)
-print(max_value)
-# col_width = max(len(row[-1]) for row in rows) + 1
-# print(col_width)
+# max_value = max(len(col[-1]) for row in rows for col in row)
+# print(max_value)
+
+# name_col_width = max(len(col[-1]) for row in rows for col in row) + 1
+
+# print(name_col_width)
 # print(i[-1].rjust(col_width) for i in rows)
+
+def get_max_col():
+    # id = 0
+    name_lengths = []
+    for row in rows:
+        if len(row) < 10:
+            id_length = str(2)
+        id_length = str(len(row))
+        for col in row:
+            name_lengths.append(len(col[-1]))
+            max_name_len = max(name_lengths)
+    return (id_length, max_name_len)
+        
+    # id += 1
+id_col_len, name_col_len = get_max_col()
+print(id_col_len, name_col_len)
 # data = [
 #     [1, 2, 3, 4, 5],
 #     [22, 33, 44, 5545, 567],
