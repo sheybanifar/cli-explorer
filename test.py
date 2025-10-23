@@ -82,19 +82,22 @@ rows = yield_row()
 
 def get_max_col():
     # id = 0
-    name_lengths = []
+    # name_lengths = []
     for row in rows:
         if len(row) < 10:
             id_length = str(2)
-        id_length = str(len(row))
+        else:
+            id_length = len(str(len(row)))
+        # for col in row:
+            # name_lengths.append(len(col[-1]))
+            # max_name_len = max(name_lengths)
+        max_name_len = max(len(col[-1]) for col in row) + 1
         for col in row:
-            name_lengths.append(len(col[-1]))
-            max_name_len = max(name_lengths)
-    return (id_length, max_name_len)
+            print(col[0].rjust(id_length), col[1].rjust(4), col[2].rjust(13), col[3].rjust(4), col[4].ljust(max_name_len))
         
-    # id += 1
-id_col_len, name_col_len = get_max_col()
-print(id_col_len, name_col_len)
+# id_col_len, name_col_len = get_max_col()
+# print(id_col_len, name_col_len)
+
 # data = [
 #     [1, 2, 3, 4, 5],
 #     [22, 33, 44, 5545, 567],
