@@ -52,30 +52,25 @@ def get_pathname(path):
     else:
         return path.name
     
-# Id = 1
-path_data = {}
+path_data = []
 def yield_row():
-    # global Id
-    Id = 1
     for path in path_iter:
         mode = get_mode(path)
         last_modified_time = get_last_modified_time(path)
         size = get_size(path)
         name = get_pathname(path)
-        # print(Id)
-        path_data[Id] = (
+        path_data.append((
             mode,
             last_modified_time,
             size,
-            name,
-        )
-        Id += 1
+            name
+        ))
     yield path_data
 
 output = yield_row()
 
 for o in output:
-    print(*o.items(), sep='\n')
+    print(*o, sep='\n')
 
 # print(*path_data.items(), sep='\n')
 
