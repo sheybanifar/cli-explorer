@@ -52,8 +52,8 @@ def get_pathname(path):
     else:
         return path.name
     
-path_data = []
 def yield_row():
+    path_data = []
     for path in path_iter:
         mode = get_mode(path)
         last_modified_time = get_last_modified_time(path)
@@ -67,20 +67,15 @@ def yield_row():
         ))
     yield path_data
 
-output = yield_row()
+rows = yield_row()
 
-for o in output:
-    print(*o, sep='\n')
-
-# print(*path_data.items(), sep='\n')
-
-# output = next(yield_path())
-# print(output)
-# print(row for row in yield_path())
-    
-# length = get_length()
-# print(length)
-
+# for o in rows:
+#     print(*o, sep='\n')
+max_value = max(col[-1] for row in rows for col in row)
+print(max_value)
+# col_width = max(len(row[-1]) for row in rows) + 1
+# print(col_width)
+# print(i[-1].rjust(col_width) for i in rows)
 # data = [
 #     [1, 2, 3, 4, 5],
 #     [22, 33, 44, 5545, 567],
