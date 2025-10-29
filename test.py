@@ -1,6 +1,6 @@
 from pathlib import Path
 
-path_iter = Path('I:\\Videos\\Tutorial').resolve().iterdir()
+path_iter = Path('c:\\Windows').resolve().iterdir()
 
 def get_length():   
     '''Get length of the directory iterator'''
@@ -72,16 +72,6 @@ def yield_row():
     yield path_data
 
 rows = yield_row()
-
-# for o in rows:
-#     print(*o, sep='\n')
-# max_value = max(len(col[-1]) for row in rows for col in row)
-# print(max_value)
-
-# name_col_width = max(len(col[-1]) for row in rows for col in row) + 1
-
-# print(name_col_width)
-# print(i[-1].rjust(col_width) for i in rows)
 
 def get_max_col():
     # id = 0
