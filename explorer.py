@@ -1,6 +1,7 @@
 from pathlib import Path
 import shutil
 import sys
+import threading
 
 class Explorer:
     try:
@@ -97,8 +98,12 @@ class Explorer:
         try:
             path = Path(cls.cwd).resolve()
             iterpath = path.iterdir()
-            rows = cls.yield_row(iterpath)
-            cls.print_path(rows)
+            # rows = cls.yield_row(iterpath)
+            # cls.print_path(rows)
+            t1 = threading.Thread(target=cls.yield_row, args=(iterpath,))
+            t1.start()
+            t1.join()
+
         except FileNotFoundError:
             print('such file or directory does not exist!')
         # print(*path.iterdir(), sep='\n')
