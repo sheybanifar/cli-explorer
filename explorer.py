@@ -85,7 +85,7 @@ class Explorer:
     def print_path(cls, rows):
         for row in rows:
             if len(row) < 10:
-                id_length = str(2)
+                id_length = 2
             else:
                 id_length = len(str(len(row)))
             max_name_len = max(len(col[-1]) for col in row) + 1
@@ -94,11 +94,14 @@ class Explorer:
 
     @classmethod
     def navigator(cls):
-        path = Path(cls.cwd).resolve()
+        try:
+            path = Path(cls.cwd).resolve()
+            iterpath = path.iterdir()
+            rows = cls.yield_row(iterpath)
+            cls.print_path(rows)
+        except FileNotFoundError:
+            print('such file or directory does not exist!')
         # print(*path.iterdir(), sep='\n')
-        iterpath = path.iterdir()
-        rows = cls.yield_row()
-        cls.print_path()
 
     @classmethod
     def run(cls):
