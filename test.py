@@ -2,12 +2,12 @@ from pathlib import Path
 
 path_iter = Path('c:\\Windows').resolve().iterdir()
 
-def get_length():   
-    '''Get length of the directory iterator'''
-    length = 0
-    for i in path_iter:
-        length += 1
-    return length
+# def get_length():   
+#     '''Get length of the directory iterator'''
+#     length = 0
+#     for i in path_iter:
+#         length += 1
+#     return length
 
 def get_mode(path):
     '''look for path mode whether is a directory or a file'''
@@ -73,23 +73,17 @@ def yield_row():
 
 rows = yield_row()
 
-def get_max_col():
-    # id = 0
-    # name_lengths = []
+def print_path():
     for row in rows:
         if len(row) < 10:
             id_length = str(2)
         else:
             id_length = len(str(len(row)))
-        # for col in row:
-            # name_lengths.append(len(col[-1]))
-            # max_name_len = max(name_lengths)
         max_name_len = max(len(col[-1]) for col in row) + 1
         for col in row:
-            # print(col[4])
             print(col[0].ljust(id_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_name_len))
         
-get_max_col()
+print_path()
 # id_col_len, name_col_len = get_max_col()
 # print(id_col_len, name_col_len)
 
