@@ -4,6 +4,9 @@ import sys
 import threading
 
 class CustomThread(threading.Thread):
+    '''This thread is provided to get yield_row method of
+    Explorer class as its target and ensure gathering
+    all data from that'''
     def __init__(self, target, *arg, **kwarg):
         super().__init__(*arg, **kwarg)
         self.target = target
@@ -12,14 +15,12 @@ class CustomThread(threading.Thread):
     def run(self):
         self.result = self.target(self._args[0])
         # print(self.target)
-        # print(self.result)
-
 
 class Explorer:
     try:
         cwd = sys.argv[1]
     except IndexError:
-        cwd = ''    # current working directory
+        cwd = Path().resolve()    # current working directory
 
     # def get_length():   
     #     '''Get length of the directory iterator'''
@@ -52,7 +53,7 @@ class Explorer:
             size_in_bytes = path.stat().st_size
             # print(size_in_bytes)
             if size_in_bytes < KB:
-                size = f'{size_in_bytes}B'
+                size = f'{size_in_bytes} B'
             elif KB <= size_in_bytes <  MB:
                 size_kb = round(size_in_bytes / KB)
                 size = f'{size_kb} KB'
@@ -102,19 +103,20 @@ class Explorer:
             else:
                 id_length = len(str(len(row)))
             max_len_name = max(len(col[-1]) for col in row) + 1
+            print()
+            print(f'Directory: {cls.cwd}'.rjust(45))
+            print()
             for col in row:
                 print(col[0].ljust(id_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
+            print()
+            print(f'Directory: {cls.cwd}'.rjust(45))
+            print()
 
     @classmethod
     def navigator(cls):
         try:
             path = Path(cls.cwd).resolve()
             iterpath = path.iterdir()
-            # rows = cls.yield_row(iterpath)
-            # cls.print_path(rows)
-            # t1 = threading.Thread(target=cls.yield_row, args=(iterpath,))
-            # t1.start()
-            # t1.join()
             t1 = CustomThread(target=cls.yield_row, args=(iterpath,))
             t1.start()
             t1.join()
