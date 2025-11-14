@@ -3,6 +3,18 @@ import shutil
 import sys
 import threading
 
+class CustomThread(threading.Thread):
+    def __init__(self, target, *arg, **kwarg):
+        super().__init__(*arg, **kwarg)
+        self.target = target
+        self.result = None
+
+    def run(self):
+        self.result = self.target(self._args[0])
+        # print(self.target)
+        # print(self.result)
+
+
 class Explorer:
     try:
         cwd = sys.argv[1]
@@ -89,9 +101,9 @@ class Explorer:
                 id_length = 2
             else:
                 id_length = len(str(len(row)))
-            max_name_len = max(len(col[-1]) for col in row) + 1
+            max_len_name = max(len(col[-1]) for col in row) + 1
             for col in row:
-                print(col[0].ljust(id_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_name_len))
+                print(col[0].ljust(id_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
 
     @classmethod
     def navigator(cls):
@@ -100,9 +112,13 @@ class Explorer:
             iterpath = path.iterdir()
             # rows = cls.yield_row(iterpath)
             # cls.print_path(rows)
-            t1 = threading.Thread(target=cls.yield_row, args=(iterpath,))
+            # t1 = threading.Thread(target=cls.yield_row, args=(iterpath,))
+            # t1.start()
+            # t1.join()
+            t1 = CustomThread(target=cls.yield_row, args=(iterpath,))
             t1.start()
             t1.join()
+            cls.print_path(t1.result)
 
         except FileNotFoundError:
             print('such file or directory does not exist!')
