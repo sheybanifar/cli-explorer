@@ -18,7 +18,7 @@ class CustomThread(threading.Thread):
 
 class Explorer:
     try:
-        cwd = sys.argv[1]
+        cwd = Path(sys.argv[1]).resolve()
     except IndexError:
         cwd = Path().resolve()    # current working directory
 
@@ -115,17 +115,24 @@ class Explorer:
     @classmethod
     def navigator(cls):
         try:
-            path = Path(cls.cwd).resolve()
-            iterpath = path.iterdir()
-            t1 = CustomThread(target=cls.yield_row, args=(iterpath,))
-            t1.start()
-            t1.join()
-            cls.print_path(t1.result)
+            iterpath = cls.cwd.iterdir()    # Generator of the path
+            thread = CustomThread(target=cls.yield_row, args=(iterpath,))
+            thread.start()
+            thread.join()
+            cls.print_path(thread.result)
 
         except FileNotFoundError:
             print('such file or directory does not exist!')
         # print(*path.iterdir(), sep='\n')
 
+        while True:
+            path = input('Enter pathname or id: ')
+            if path.isnumeric():
+                for paths in thread.result:
+                    for item in paths:
+                        if path == item[0]:
+                            if Path(item[-1]).is_dir():
+                                cls.cwd = Path(item[-1]).resolve()
     @classmethod
     def run(cls):
         cls.navigator()
