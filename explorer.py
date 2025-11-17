@@ -22,6 +22,7 @@ class Explorer:
     except IndexError:
         cwd = Path().resolve()    # current working directory
 
+    dir_length = None
     # def get_length():   
     #     '''Get length of the directory iterator'''
     #     length = 0
@@ -75,6 +76,10 @@ class Explorer:
         else:
             return path.name
 
+    def store_pathnames(path_data):
+        pathnames = []
+        for item in path_data[2:]:
+            
     @classmethod
     def yield_row(cls, iterpath):
         _id = 1
@@ -102,6 +107,7 @@ class Explorer:
                 id_length = 2
             else:
                 id_length = len(str(len(row)))
+            cls.dir_length = len(row)   # number of dir content
             max_len_name = max(len(col[-1]) for col in row) + 1
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
