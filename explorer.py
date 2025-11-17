@@ -23,6 +23,7 @@ class Explorer:
         cwd = Path().resolve()    # current working directory
 
     dir_length = None
+    dir_content = {}
     # def get_length():   
     #     '''Get length of the directory iterator'''
     #     length = 0
@@ -76,10 +77,12 @@ class Explorer:
         else:
             return path.name
 
-    def store_pathnames(path_data):
-        pathnames = []
-        for item in path_data[2:]:
-            
+    @classmethod
+    def store_pathnames(cls, path_data):
+        for column in path_data[2:]:
+            # cls.dir_content.append(column[-1])
+            cls.dir_content[column[0]] = column[-1] # latest index is pathname
+
     @classmethod
     def yield_row(cls, iterpath):
         _id = 1
@@ -107,7 +110,8 @@ class Explorer:
                 id_length = 2
             else:
                 id_length = len(str(len(row)))
-            cls.dir_length = len(row)   # number of dir content
+            cls.dir_length = len(row) - 2  # number of dir content
+            cls.store_pathnames(row)
             max_len_name = max(len(col[-1]) for col in row) + 1
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
@@ -132,13 +136,25 @@ class Explorer:
         # print(*path.iterdir(), sep='\n')
 
         while True:
-            path = input('Enter pathname or id: ')
-            if path.isnumeric():
-                for paths in thread.result:
-                    for item in paths:
-                        if path == item[0]:
-                            if Path(item[-1]).is_dir():
-                                cls.cwd = Path(item[-1]).resolve()
+            entry = input('Enter pathname or id: ')
+            if entry == '':
+                continue
+            elif entry.isnumeric():
+                if int(entry) <= 0:
+                    print('Invalid input!')
+                    continue
+                elif int(entry) <= cls.dir_length:
+                    directory = cls.cwd / cls.dir_content[entry]
+                    if directory.is_dir():
+                        cls.cwd = Path(directory).resolve()
+                        cls.navigator()
+
+            # if path.isnumeric():
+            #     for paths in thread.result:
+            #         for item in paths:
+            #             if path == item[0]:
+            #                 if Path(item[-1]).is_dir():
+            #                     cls.cwd = Path(item[-1]).resolve()
     @classmethod
     def run(cls):
         cls.navigator()
