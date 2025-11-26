@@ -143,7 +143,9 @@ class Explorer:
             entry = input('Enter pathname or id: ')
             if entry == '':
                 continue
-            elif entry == '..':
+            elif entry == '.':
+                cls.navigator() # Refresh the "cwd"
+            elif entry == '..': # Backward navigation
                 directory = cls.cwd.resolve().parent
                 if directory.is_dir():
                     cls.cwd = directory.resolve()
@@ -153,6 +155,7 @@ class Explorer:
                     print('Invalid input!')
                     continue
                 elif int(entry) <= cls.dir_length:
+                    entry = entry.lstrip('0')
                     directory = cls.cwd / cls.dir_content[entry]
                     if directory.is_dir():
                         cls.cwd = directory.resolve()
