@@ -133,12 +133,21 @@ class Explorer:
 
         except FileNotFoundError:
             print('such file or directory does not exist!')
-        # print(*path.iterdir(), sep='\n')
+            cls.navigator()
+        except PermissionError:
+            print('Access is denied!')
+            cls.cwd = cls.cwd.resolve().parent
+            # cls.navigator()
 
         while True:
             entry = input('Enter pathname or id: ')
             if entry == '':
                 continue
+            elif entry == '..':
+                directory = cls.cwd.resolve().parent
+                if directory.is_dir():
+                    cls.cwd = directory.resolve()
+                    cls.navigator()
             elif entry.isnumeric():
                 if int(entry) <= 0:
                     print('Invalid input!')
@@ -146,7 +155,7 @@ class Explorer:
                 elif int(entry) <= cls.dir_length:
                     directory = cls.cwd / cls.dir_content[entry]
                     if directory.is_dir():
-                        cls.cwd = Path(directory).resolve()
+                        cls.cwd = directory.resolve()
                         cls.navigator()
 
             # if path.isnumeric():
