@@ -154,12 +154,15 @@ class Explorer:
                 if int(entry) <= 0:
                     print('Invalid input!')
                     continue
-                elif int(entry) <= cls.dir_length:
-                    entry = entry.lstrip('0')
+                elif entry.lstrip('0') in cls.dir_content.keys():
                     directory = cls.cwd / cls.dir_content[entry]
                     if directory.is_dir():
                         cls.cwd = directory.resolve()
                         cls.navigator()
+            else:
+                if entry in cls.dir_content.values():
+                    cls.cwd = cls.cwd / entry
+                    cls.navigator()
 
             # if path.isnumeric():
             #     for paths in thread.result:
