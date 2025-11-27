@@ -133,7 +133,6 @@ class Explorer:
         except PermissionError:
             print('Access is denied!')
             cls.cwd = cls.cwd.resolve().parent
-            # cls.navigator()
 
         while True:
             entry = input('Enter pathname or id: ')
@@ -159,12 +158,7 @@ class Explorer:
                 if entry in cls.dir_content.values():
                     cls.cwd = cls.cwd / entry
                     cls.navigator()
-                else:
-                    directory = Path(entry)
-                    print('absolutepath')
-                    if directory.is_dir():
-                        cls.cwd = directory.resolve()
-                        cls.navigator()
+
             # if path.isnumeric():
             #     for paths in thread.result:
             #         for item in paths:
