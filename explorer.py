@@ -22,7 +22,7 @@ class Explorer:
     except IndexError:
         cwd = Path().resolve()    # current working directory
 
-    dir_length = None   # Number of listed items
+    dir_items = None   # Number of listed items
     dir_content = {}    # holding id & name as "Id: Name" pairs
 
     @staticmethod
@@ -73,6 +73,10 @@ class Explorer:
         else:
             return path.name
 
+    # @staticmethod
+    # def get_dir_size(path):
+
+
     @classmethod
     def store_pathnames(cls, path_data):
         '''populates cls.dir_content'''
@@ -106,7 +110,7 @@ class Explorer:
                 id_length = 2
             else:
                 id_length = len(str(len(row)))
-            cls.dir_length = len(row) - 2  # number of dir content
+            cls.dir_items = len(row) - 2  # number of dir content
             cls.store_pathnames(row)
             max_len_name = max(len(col[-1]) for col in row) + 1
             print()
@@ -158,6 +162,12 @@ class Explorer:
                 if entry in cls.dir_content.values():
                     cls.cwd = cls.cwd / entry
                     cls.navigator()
+                else:
+                    # if an absolute dir (with drive letter are given); navigate it
+                    directory = Path(entry)
+                    if directory.drive:
+                        cls.cwd = directory
+                        cls.navigator()
 
             # if path.isnumeric():
             #     for paths in thread.result:
