@@ -4,9 +4,10 @@ import sys
 import threading
 
 class CustomThread(threading.Thread):
-    '''This thread is provided to get yield_row method of
-    Explorer class as its target and ensure gathering
-    all data from that'''
+    '''This thread is provided to get
+    Explorer's yield_row method as its target
+    and ensure gathering all data from that'''
+
     def __init__(self, target, *arg, **kwarg):
         super().__init__(*arg, **kwarg)
         self.target = target
@@ -14,7 +15,6 @@ class CustomThread(threading.Thread):
 
     def run(self):
         self.result = self.target(self._args[0])
-        # print(self.target)
 
 class Explorer:
     try:
@@ -22,14 +22,9 @@ class Explorer:
     except IndexError:
         cwd = Path().resolve()    # current working directory
 
-    dir_length = None
-    dir_content = {}
-    # def get_length():   
-    #     '''Get length of the directory iterator'''
-    #     length = 0
-    #     for i in path_iter:
-    #         length += 1
-    #     return length
+    dir_length = None   # Number of listed items
+    dir_content = {}    # holding id & name as "Id: Name" pairs
+
     @staticmethod
     def get_mode(path):
         '''look for path mode whether is a directory or a file'''
@@ -48,12 +43,12 @@ class Explorer:
     
     @staticmethod
     def get_size(path):
+        '''Get file size in kb, mb or gb'''
         KB = 1000
         MB = KB ** 2
         GB = MB ** 2
         if not path.is_dir():
             size_in_bytes = path.stat().st_size
-            # print(size_in_bytes)
             if size_in_bytes < KB:
                 size = f'{size_in_bytes} B'
             elif KB <= size_in_bytes <  MB:
@@ -71,6 +66,7 @@ class Explorer:
     
     @staticmethod
     def get_pathname(path):
+        '''returns name of a dir or file'''
         if path.is_dir():
             pathname = path.name + '/'
             return pathname
@@ -79,8 +75,8 @@ class Explorer:
 
     @classmethod
     def store_pathnames(cls, path_data):
+        '''populates cls.dir_content'''
         for column in path_data[2:]:
-            # cls.dir_content.append(column[-1])
             cls.dir_content[column[0]] = column[-1] # latest index is pathname
 
     @classmethod
@@ -163,7 +159,12 @@ class Explorer:
                 if entry in cls.dir_content.values():
                     cls.cwd = cls.cwd / entry
                     cls.navigator()
-
+                else:
+                    directory = Path(entry)
+                    print('absolutepath')
+                    if directory.is_dir():
+                        cls.cwd = directory.resolve()
+                        cls.navigator()
             # if path.isnumeric():
             #     for paths in thread.result:
             #         for item in paths:
