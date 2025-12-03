@@ -73,9 +73,13 @@ class Explorer:
         else:
             return path.name
 
-    # @staticmethod
-    # def get_dir_size(path):
-
+    @staticmethod
+    def get_dir_size(path):
+        dir_size = 0
+        path_roots = path.walk()
+        for item in path_roots:
+            for file in item[-1]:
+                absolute_path = Path
 
     @classmethod
     def store_pathnames(cls, path_data):
