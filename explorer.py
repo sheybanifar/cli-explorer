@@ -73,13 +73,15 @@ class Explorer:
         else:
             return path.name
 
-    @staticmethod
-    def get_dir_size(path):
+    @classmethod
+    def get_dir_size(cls):
         dir_size = 0
-        path_roots = path.walk()
+        path_roots = cls.cwd.walk()
         for item in path_roots:
             for file in item[-1]:
-                absolute_path = Path
+                path_obj = item[0] / file
+                dir_size += path_obj.stat().st_size
+        return dir_size
 
     @classmethod
     def store_pathnames(cls, path_data):
@@ -124,6 +126,8 @@ class Explorer:
                 print(col[0].ljust(id_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
+            dir_size = cls.get_dir_size()
+            print(f'Total size: {dir_size}'.rjust(45))
             print()
 
     @classmethod
