@@ -147,7 +147,7 @@ class Explorer:
 
             thread_rows.join()
             thread_total_size.join()
-            
+
             cls.print_path(thread_rows.result)
 
         except FileNotFoundError:
@@ -158,7 +158,11 @@ class Explorer:
             cls.cwd = cls.cwd.resolve().parent
 
         while True:
-            entry = input('Enter pathname or id: ')
+            try:
+                entry = input('Enter pathname or id: ')
+            except KeyboardInterrupt:
+                print('\nExiting the program...')
+                exit()
             if entry == '':
                 continue
             elif entry == '.':
