@@ -42,27 +42,32 @@ class Explorer:
         return lastModifiedTime
     
     @staticmethod
-    def get_size(path):
+    def get_size(path=None, path_size=None):
         '''Get file size in kb, mb or gb'''
         KB = 1000
         MB = KB ** 2
-        GB = MB ** 2
-        if not path.is_dir():
+        GB = KB ** 3
+        if path and path.is_file():
             size_in_bytes = path.stat().st_size
-            if size_in_bytes < KB:
-                size = f'{size_in_bytes} B'
-            elif KB <= size_in_bytes <  MB:
-                size_kb = round(size_in_bytes / KB)
-                size = f'{size_kb} KB'
-            elif MB <= size_in_bytes <= GB:
-                size_mb = round(size_in_bytes / MB)
-                size = f'{size_mb} MB'
-            elif GB <= size_in_bytes:
-                size_gb = round(size_in_bytes / GB, 1)
-                size = f'{size_gb} GB'
-            return size
+        elif path_size:
+            size_in_bytes = path_size
+        
         else:
             return ''
+        
+        if size_in_bytes < KB:
+            size = f'{size_in_bytes} B'
+        elif KB <= size_in_bytes <  MB:
+            size_kb = round(size_in_bytes / KB)
+            size = f'{size_kb} KB'
+        elif MB <= size_in_bytes <= GB:
+            size_mb = round(size_in_bytes / MB)
+            size = f'{size_mb} MB'
+        elif GB <= size_in_bytes:
+            size_gb = round(size_in_bytes / GB, 1)
+            size = f'{size_gb} GB'
+        return size
+        
     
     @staticmethod
     def get_pathname(path):
@@ -81,7 +86,7 @@ class Explorer:
             for file in item[-1]:
                 path_obj = item[0] / file
                 dir_size += path_obj.stat().st_size
-        return dir_size
+        return cls.get_size(path_size=dir_size)
 
     @classmethod
     def store_pathnames(cls, path_data):
