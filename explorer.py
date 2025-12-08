@@ -80,13 +80,13 @@ class Explorer:
 
     @classmethod
     def get_dir_size(cls):
-        dir_size = 0
+        # dir_size = 0
         path_roots = cls.cwd.walk()
         for item in path_roots:
             for file in item[-1]:
                 path_obj = item[0] / file
-                dir_size += path_obj.stat().st_size
-        return cls.get_size(path_size=dir_size)
+                cls.dir_size += path_obj.stat().st_size
+        cls.get_size(path_size=cls.dir_size)
 
     @classmethod
     def store_pathnames(cls, path_data):
@@ -139,10 +139,10 @@ class Explorer:
     def navigator(cls):
         try:
             iterpath = cls.cwd.iterdir()    # Generator of the path
-            thread = CustomThread(target=cls.yield_row, args=(iterpath,))
-            thread.start()
-            thread.join()
-            cls.print_path(thread.result)
+            thread_rows = CustomThread(target=cls.yield_row, args=(iterpath,))
+            thread_rows.start()
+            thread_rows.join()
+            cls.print_path(thread_rows.result)
 
         except FileNotFoundError:
             print('such file or directory does not exist!')
