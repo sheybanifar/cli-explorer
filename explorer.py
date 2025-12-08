@@ -24,6 +24,7 @@ class Explorer:
 
     dir_items = None   # Number of listed items
     dir_content = {}    # holding id & name as "Id: Name" pairs
+    dir_size = 0
 
     @staticmethod
     def get_mode(path):
@@ -80,13 +81,13 @@ class Explorer:
 
     @classmethod
     def get_dir_size(cls):
-        # dir_size = 0
+        dir_size = 0
         path_roots = cls.cwd.walk()
         for item in path_roots:
             for file in item[-1]:
                 path_obj = item[0] / file
-                cls.dir_size += path_obj.stat().st_size
-        cls.get_size(path_size=cls.dir_size)
+                dir_size += path_obj.stat().st_size
+        cls.dir_size = cls.get_size(path_size=dir_size)
 
     @classmethod
     def store_pathnames(cls, path_data):
@@ -131,8 +132,7 @@ class Explorer:
                 print(col[0].ljust(id_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
-            dir_size = cls.get_dir_size()
-            print(f'Total size: {dir_size}'.rjust(45))
+            print(f'Total size: {cls.dir_size}'.rjust(45))
             print()
 
     @classmethod
@@ -140,8 +140,14 @@ class Explorer:
         try:
             iterpath = cls.cwd.iterdir()    # Generator of the path
             thread_rows = CustomThread(target=cls.yield_row, args=(iterpath,))
+            thread_total_size = threading.Thread(target=cls.get_dir_size)
+            
             thread_rows.start()
+            thread_total_size.start()
+
             thread_rows.join()
+            thread_total_size.join()
+            
             cls.print_path(thread_rows.result)
 
         except FileNotFoundError:
