@@ -24,10 +24,14 @@ def task(iterable):
 
 # print(result, f'ThreadPool time: {end - start}')
 
-start = time.time()
-with cc.ProcessPoolExecutor() as exc:
-    future = exc.submit(task, l)
-    result = future.result()
-end = time.time()
+def main():
+    start = time.time()
+    with cc.ProcessPoolExecutor() as exc:
+        future = exc.submit(task, l)
+        result = future.result()
+    end = time.time()
 
-print(result, f'ProcessPool time: {end - start}')
+    print(result, f'ProcessPool time: {end - start}')
+
+if __name__ == '__main__':
+    main()
