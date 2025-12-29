@@ -71,7 +71,7 @@
 
 import time
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 
 def file_size(path: Path) -> int:
     return path.stat().st_size
