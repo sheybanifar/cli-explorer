@@ -69,29 +69,129 @@
 
 # ================= 3rd edition ================
 
+# import time
+# from pathlib import Path
+# from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+
+# def file_size(path: Path) -> int:
+#     return path.stat().st_size
+
+# def total_size_parallel(root: Path, workers: int = 4) -> int:
+#     files = list(root.rglob('*'))
+#     total = 0
+
+#     with ThreadPoolExecutor(max_workers=workers) as exc:
+#         futures = [exc.submit(file_size, f) for f in files if f.is_file()]
+
+#         for future in as_completed(futures):
+#             total += future.result()
+
+#     return total
+
+# if __name__ == "__main__":
+#     p = Path("i:/")
+#     start = time.time()
+#     size = total_size_parallel(p, workers=4)
+#     end = time.time()
+#     print(f"Total size: {size} bytes")
+#     print(f"Time: {end - start}")
+
+# ================= 4th edition ================
+
+# import concurrent.futures as cc
+# import time
+# from pathlib import Path
+
+# from pathlib import Path
+
+# def batch_size(files: list[Path]) -> int:
+#     total = 0
+#     for f in files:
+#         try:
+#             total += f.stat().st_size
+#         except (PermissionError, FileNotFoundError):
+#             pass
+#     return total
+
+# def all_files(root: Path):
+#     for dirpath, _, filenames in Path.walk(root):
+#         for name in filenames:
+#             yield Path(dirpath) / name
+
+# def chunked(iterable, size):
+#     chunk = []
+#     for item in iterable:
+#         chunk.append(item)
+#         if len(chunk) == size:
+#             yield chunk
+#             chunk = []
+#     if chunk:
+#         yield chunk
+
+# if __name__ == "__main__":
+#     root = Path("i:/")
+#     BATCH_SIZE = 1000
+
+#     start = time.time()
+
+#     files = all_files(root)
+#     batches = chunked(files, BATCH_SIZE)
+
+#     total = 0
+#     with cc.ProcessPoolExecutor(max_workers=4) as executor:
+#         futures = [executor.submit(batch_size, batch) for batch in batches]
+
+#         for future in cc.as_completed(futures):
+#             total += future.result()
+
+#     end = time.time()
+#     print(f"elapsed time: {end - start:.2f}s   total={total}")
+
+# ================= 5th edition ================
+import concurrent.futures as cc
 import time
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
+import os
 
-def file_size(path: Path) -> int:
-    return path.stat().st_size
-
-def total_size_parallel(root: Path, workers: int = 4) -> int:
-    files = list(root.rglob('*'))
+def batch_size(files: list[Path]) -> int:
     total = 0
-
-    with ThreadPoolExecutor(max_workers=workers) as exc:
-        futures = [exc.submit(file_size, f) for f in files if f.is_file()]
-
-        for future in as_completed(futures):
-            total += future.result()
-
+    for f in files:
+        try:
+            total += f.stat().st_size
+        except (PermissionError, FileNotFoundError):
+            pass
     return total
 
+def all_files(root: Path):
+    for dirpath, _, filenames in os.walk(root):
+        for name in filenames:
+            yield Path(dirpath) / name
+
+def chunked(iterable, size):
+    chunk = []
+    for item in iterable:
+        chunk.append(item)
+        if len(chunk) == size:
+            yield chunk
+            chunk = []
+    if chunk:
+        yield chunk
+
 if __name__ == "__main__":
-    p = Path("i:/")
+    root = Path("i:/")
+    BATCH_SIZE = 1000
+
     start = time.time()
-    size = total_size_parallel(p, workers=4)
+
+    files = all_files(root)
+    batches = chunked(files, BATCH_SIZE)
+
+    total = 0
+    with cc.ThreadPoolExecutor(max_workers=8) as executor:
+        futures = [executor.submit(batch_size, batch) for batch in batches]
+
+        for future in cc.as_completed(futures):
+            total += future.result()
+
     end = time.time()
-    print(f"Total size: {size} bytes")
-    print(f"Time: {end - start}")
+    print(f"elapsed time: {end - start:.2f}s   total={total}")
