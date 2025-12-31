@@ -38,6 +38,7 @@
 
 import time
 from pathlib import Path
+import concurrent.futures as cc
 
 def file_size(path: Path) -> int:
     return path.stat().st_size
@@ -49,12 +50,26 @@ def sub_files(path: Path):
     for item in path_walk:
         for filename in item[-1]:
             path_obj = item[0] / filename
-            return file_size(path_obj)
+            yield file_size(path_obj)
 
 start = time.time()
-total = sum(f for f in sub_files(p))
+
+with cc.ProcessPoolExecutor() as exc:
+    future = exc.submit(sub_files, p)
+    total = future.result()
+
 end = time.time()
 print(f'elapsed time: {end - start}s   {total}')
+# total = sum(f for f in sub_files(p))
+# ======================= 
+
+def sub_files(path: Path):
+    total_size = 0
+    for item in path.walk():
+        for filename in item[-1]:
+            path_obj = item[0] / filename
+            total_size += file_size(path_obj)
+    return total_size
 
 # ======================= 
 
