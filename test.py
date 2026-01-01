@@ -73,26 +73,52 @@
 
 # ======================= 
 
-import time
-from pathlib import Path
-import os
+# import time
+# from pathlib import Path
+# import os
 
-def file_size(path: Path) -> int:
-    return path.stat().st_size
+# def file_size(path: Path) -> int:
+#     return path.stat().st_size
 
-p = Path('i:/')
+# p = Path('i:/')
 
-def sub_files(path: Path):
-    sizes_iterator = []
-    path_walk = path.walk()
-    for item in path_walk:
-        for filename in item[-1]:
-            path_obj = item[0] / filename
-            sizes_iterator.append(path_obj)
-    yield iter(sizes_iterator)
+# def sub_files(path: Path):
+#     sizes_iterator = []
+#     path_walk = path.walk()
+#     for item in path_walk:
+#         for filename in item[-1]:
+#             path_obj = item[0] / filename
+#             sizes_iterator.append(path_obj)
+#     yield iter(sizes_iterator)
 
-ranges = [
+# ranges = [
 
-]
+# ]
 
-chunk = 
+# chunk = 
+
+# =======================================
+# SuperFastPython.com
+# example of waiting for tasks to complete in the process pool
+from time import sleep
+from random import random
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import wait
+ 
+# custom task that will sleep for a variable amount of time
+def task(name):
+    # sleep for less than a second
+    sleep(random())
+    print(f'Done: {name}')
+ 
+# entry point
+if __name__ == '__main__':
+    # start the process pool
+    with ProcessPoolExecutor(2) as executor:
+        # submit tasks and collect futures
+        futures = [executor.submit(task, i) for i in range(10)]
+        # wait for all tasks to complete
+        print('Waiting for tasks to complete...')
+        executor.shutdown(wait=False, cancel_futures=True)
+        print('All tasks are done!')
+    print('this is from put of the context manager')
