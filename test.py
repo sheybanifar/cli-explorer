@@ -119,6 +119,8 @@ if __name__ == '__main__':
         futures = [executor.submit(task, i) for i in range(10)]
         # wait for all tasks to complete
         print('Waiting for tasks to complete...')
-        executor.shutdown(wait=False, cancel_futures=True)
+        ff = wait(futures, timeout=1)
+        print(*ff)
+        executor.shutdown(wait=True, cancel_futures=True)
         print('All tasks are done!')
     print('this is from put of the context manager')
