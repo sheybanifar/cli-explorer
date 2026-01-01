@@ -102,8 +102,6 @@ import concurrent.futures as cc
 import time
 from pathlib import Path
 
-from pathlib import Path
-
 def batch_size(files: list[Path]) -> int:
     total = 0
     for f in files:

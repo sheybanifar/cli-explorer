@@ -23,7 +23,7 @@ class Explorer:
         cwd = Path().resolve()    # current working directory
 
     dir_items = None   # Number of listed items
-    dir_content = {}    # holding id & name as "Id: Name" pairs
+    dir_content = {}   # holding id & name as "Id: Name" pairs
     dir_size = 0
 
     @staticmethod
