@@ -124,7 +124,7 @@ class Explorer:
                 total += file.stat().st_size
             except (PermissionError, FileNotFoundError):
                 pass
-        return cls.get_size(path_size=total)
+        return total
 
     @staticmethod
     def all_files(path: Path):      # ProcessPool
@@ -185,7 +185,7 @@ class Explorer:
                     total = 0
                     for future in cc.as_completed(futures):
                         total += future.result()
-                    cls.dir_size = total
+                    cls.dir_size = cls.get_size(path_size=total)
 
             thread_rows.join()
             # thread_total_size.join()
