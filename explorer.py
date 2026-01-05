@@ -2,6 +2,7 @@ from pathlib import Path
 import shutil
 import sys
 import threading
+import concurrent.futures as cc
 
 class CustomThread(threading.Thread):
     '''This thread is provided to get
@@ -116,6 +117,33 @@ class Explorer:
         yield path_data
 
     @classmethod
+    def batch_size(cls, files: list[Path]):     # ProcessPool
+        total = 0
+        for file in files:
+            try:
+                total += file.stat().st_size
+            except (PermissionError, FileNotFoundError):
+                pass
+        return cls.get_size(path_size=total)
+
+    @staticmethod
+    def all_files(path: Path):      # ProcessPool
+        for self_path, _, filenames in path.walk():
+            for file in filenames:
+                yield Path(self_path) / file
+    
+    @staticmethod
+    def chunks(all_files, size):    # ProcessPool
+        chunk = []
+        for i in all_files:
+            chunk.append(i)
+            if len(chunk) == size:
+                yield chunk
+                chunk = []
+        if chunk:
+            yield chunk
+
+    @classmethod
     def print_path(cls, rows):
         for row in rows:
             if len(row) < 10:
@@ -140,13 +168,27 @@ class Explorer:
         try:
             iterpath = cls.cwd.iterdir()    # Generator of the path
             thread_rows = CustomThread(target=cls.yield_row, args=(iterpath,))
-            thread_total_size = threading.Thread(target=cls.get_dir_size)
+            # thread_total_size = threading.Thread(target=cls.get_dir_size)
             
             thread_rows.start()
-            thread_total_size.start()
+            # thread_total_size.start()
+
+            # =================ProcessPool=================
+            if __name__ == '__main__':
+                with cc.ProcessPoolExecutor() as exc:
+                    BATCH_SIZE = 1000
+                    all_files = cls.all_files(cls.cwd)
+                    batches = cls.chunks(all_files, BATCH_SIZE)
+                    
+                    futures = [exc.submit(cls.batch_size, batch) for batch in batches]
+
+                    total = 0
+                    for future in cc.as_completed(futures):
+                        total += future.result()
+                    cls.dir_size = total
 
             thread_rows.join()
-            thread_total_size.join()
+            # thread_total_size.join()
 
             cls.print_path(thread_rows.result)
 
