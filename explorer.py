@@ -140,19 +140,20 @@ class Explorer:
         try:
             iterpath = cls.cwd.iterdir()    # Generator of the path
             thread_rows = CustomThread(target=cls.yield_row, args=(iterpath,))
-            thread_total_size = threading.Thread(target=cls.get_dir_size)
+            # thread_total_size = threading.Thread(target=cls.get_dir_size)
             
             thread_rows.start()
-            thread_total_size.start()
+            # thread_total_size.start()
 
             thread_rows.join()
-            thread_total_size.join()
+            # thread_total_size.join()
 
             cls.print_path(thread_rows.result)
 
         except FileNotFoundError:
             print('such file or directory does not exist!')
-            cls.navigator()
+            print(cls.cwd)
+            # cls.navigator()
         except PermissionError:
             print('Access is denied!')
             cls.cwd = cls.cwd.resolve().parent
@@ -177,6 +178,7 @@ class Explorer:
                     print('Invalid input!')
                     continue
                 elif entry.lstrip('0') in cls.dir_content.keys():
+                    entry = entry.lstrip('0')
                     directory = cls.cwd / cls.dir_content[entry]
                     if directory.is_dir():
                         cls.cwd = directory.resolve()
@@ -186,9 +188,9 @@ class Explorer:
                     cls.cwd = cls.cwd / entry
                     cls.navigator()
                 else:
-                    # if an absolute dir (with drive letter are given); navigate it
+                    # if an absolute dir with drive letter had been given; navigate it
                     directory = Path(entry)
-                    if directory.drive:
+                    if directory.exists():
                         cls.cwd = directory
                         cls.navigator()
 
