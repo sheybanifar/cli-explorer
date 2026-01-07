@@ -80,15 +80,15 @@ class Explorer:
         else:
             return path.name
 
-    @classmethod
-    def get_dir_size(cls):
-        dir_size = 0
-        path_roots = cls.cwd.walk()
-        for item in path_roots:
-            for file in item[-1]:
-                path_obj = item[0] / file
-                dir_size += path_obj.stat().st_size
-        cls.dir_size = cls.get_size(path_size=dir_size)
+    # @classmethod
+    # def get_dir_size(cls):
+    #     dir_size = 0
+    #     path_roots = cls.cwd.walk()
+    #     for item in path_roots:
+    #         for file in item[-1]:
+    #             path_obj = item[0] / file
+    #             dir_size += path_obj.stat().st_size
+    #     cls.dir_size = cls.get_size(path_size=dir_size)
 
     @classmethod
     def store_pathnames(cls, path_data):
