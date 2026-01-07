@@ -190,7 +190,7 @@ class Explorer:
                 else:
                     # if an absolute dir with drive letter had been given; navigate it
                     directory = Path(entry)
-                    if directory.exists():
+                    if directory.exists() and directory.is_absolute():
                         cls.cwd = directory
                         cls.navigator()
 
