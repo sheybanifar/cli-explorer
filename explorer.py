@@ -23,7 +23,7 @@ class Explorer:
     except IndexError:
         cwd = Path().resolve()    # current working directory
 
-    dir_items = None   # Number of listed items
+    dir_items_count = None   # Number of listed items
     dir_content = {}   # holding id & name as "Id: Name" pairs
     dir_size = 0
 
@@ -144,20 +144,20 @@ class Explorer:
             yield chunk
 
     @classmethod
-    def print_path(cls, rows):
-        for row in rows:
-            if len(row) < 10:
-                id_length = 2
+    def print_path(cls, path_data):
+        for tuple in path_data:
+            if len(tuple) < 10:
+                id_column_length = 2
             else:
-                id_length = len(str(len(row)))
-            cls.dir_items = len(row) - 2  # number of dir content
-            cls.store_pathnames(row)
-            max_len_name = max(len(col[-1]) for col in row) + 1
+                id_column_length = len(str(len(tuple)))
+            cls.dir_items_count = len(tuple) - 2  # number of dir content
+            cls.store_pathnames(tuple)
+            max_len_name = max(len(col[-1]) for col in tuple) + 1
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
             print()
-            for col in row:
-                print(col[0].ljust(id_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
+            for col in tuple:
+                print(col[0].ljust(id_column_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
             print(f'Total size: {cls.dir_size}'.rjust(45))
