@@ -209,6 +209,7 @@ class Explorer:
             if entry == '':
                 continue
             elif entry == '.':
+                print(cls.cwd)
                 cls.navigator() # Refresh the "cwd"
             elif entry == '..': # Backward navigation
                 directory = cls.cwd.resolve().parent
@@ -234,6 +235,7 @@ class Explorer:
                     directory = Path(entry)
                     if directory.exists() and directory.is_absolute():
                         cls.cwd = directory
+                        print(cls.cwd)
                         cls.navigator()
 
             # if path.isnumeric():

@@ -100,37 +100,37 @@
 # =======================================
 # SuperFastPython.com
 # example of waiting for tasks to complete in the process pool
-# from time import sleep
-# from random import random
-# from concurrent.futures import ProcessPoolExecutor
-# from concurrent.futures import wait
+from time import sleep
+from random import random
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import wait
  
-# # custom task that will sleep for a variable amount of time
-# def task(name):
-#     # sleep for less than a second
-#     sleep(random())
-#     print(f'Done: {name}')
+# custom task that will sleep for a variable amount of time
+def task(name):
+    # sleep for less than a second
+    sleep(random())
+    print(f'Done: {name}')
  
-# # entry point
-# if __name__ == '__main__':
-#     # start the process pool
-#     with ProcessPoolExecutor(2) as executor:
-#         # submit tasks and collect futures
-#         futures = [executor.submit(task, i) for i in range(10)]
-#         # wait for all tasks to complete
-#         print('Waiting for tasks to complete...')
-#         ff = wait(futures, timeout=1)
-#         print(*ff)
-#         executor.shutdown(wait=True, cancel_futures=True)
-#         print('All tasks are done!')
-#     print('this is from put of the context manager')
+# entry point
+if __name__ == '__main__':
+    # start the process pool
+    with ProcessPoolExecutor(2) as executor:
+        # submit tasks and collect futures
+        futures = [executor.submit(task, i) for i in range(10)]
+        # wait for all tasks to complete
+        print('Waiting for tasks to complete...')
+        # ff = wait(futures,)
+        # print(*ff)
+        executor.shutdown(wait=False,)
+        print('All tasks are done!')
+    print('this is from put of the context manager')
 
 # ==========================================
 
-from pathlib import Path
+# from pathlib import Path
 
-p = Path('//test').resolve()
-print(p.exists())
-print(p.is_absolute())
-print(p.drive)
-print(p)
+# p = Path('//test').resolve()
+# print(p.exists())
+# print(p.is_absolute())
+# print(p.drive)
+# print(p)

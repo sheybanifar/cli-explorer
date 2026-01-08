@@ -5,3 +5,9 @@
 * \[DONE] display folder size
 * make less time of gathering folder size
 * deny to access $RecycleBin and other system paths in directories
+
+===================================
+
+bugs:
+
+* double displaying the directory on first time of running.
