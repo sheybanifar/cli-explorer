@@ -80,15 +80,15 @@ class Explorer:
         else:
             return path.name
 
-    # @classmethod
-    # def get_dir_size(cls):
-    #     dir_size = 0
-    #     path_roots = cls.cwd.walk()
-    #     for item in path_roots:
-    #         for file in item[-1]:
-    #             path_obj = item[0] / file
-    #             dir_size += path_obj.stat().st_size
-    #     cls.dir_size = cls.get_size(path_size=dir_size)
+    @classmethod
+    def get_dir_size(cls):
+        dir_size = 0
+        path_roots = cls.cwd.walk()
+        for item in path_roots:
+            for file in item[-1]:
+                path_obj = item[0] / file
+                dir_size += path_obj.stat().st_size
+        cls.dir_size = cls.get_size(path_size=dir_size)
 
     @classmethod
     def store_pathnames(cls, path_data):
@@ -167,30 +167,31 @@ class Explorer:
     def navigator(cls):
         try:
             iterpath = cls.cwd.iterdir()    # Generator of the path
-            thread_rows = CustomThread(target=cls.yield_row, args=(iterpath,))
-            # thread_total_size = threading.Thread(target=cls.get_dir_size)
+            # thread_rows = CustomThread(target=cls.yield_row, args=(iterpath,))
+            thread_total_size = threading.Thread(target=cls.get_dir_size)
             
-            thread_rows.start()
-            # thread_total_size.start()
+            # thread_rows.start()
+            thread_total_size.start()
 
             # =================ProcessPool=================
-            if __name__ == '__main__':
-                with cc.ProcessPoolExecutor() as exc:
-                    BATCH_SIZE = 1000
-                    all_files = cls.all_files(cls.cwd)
-                    batches = cls.chunks(all_files, BATCH_SIZE)
+            # if __name__ == '__main__':
+            #     with cc.ProcessPoolExecutor() as exc:
+            #         BATCH_SIZE = 1000
+            #         all_files = cls.all_files(cls.cwd)
+            #         batches = cls.chunks(all_files, BATCH_SIZE)
                     
-                    futures = [exc.submit(cls.batch_size, batch) for batch in batches]
+            #         futures = [exc.submit(cls.batch_size, batch) for batch in batches]
 
-                    total = 0
-                    for future in cc.as_completed(futures):
-                        total += future.result()
-                    cls.dir_size = cls.get_size(path_size=total)
+            #         total = 0
+            #         for future in cc.as_completed(futures):
+            #             total += future.result()
+            #         cls.dir_size = cls.get_size(path_size=total)
 
-            thread_rows.join()
-            # thread_total_size.join()
+            # thread_rows.join()
+            thread_total_size.join()
 
-            cls.print_path(thread_rows.result)
+            # cls.print_path(thread_rows.result)
+            cls.print_path(cls.yield_row(iterpath))
 
         except FileNotFoundError:
             print('such file or directory does not exist!')
