@@ -29,12 +29,12 @@ class Explorer:
         return lastModifiedTime
     
     @staticmethod
-    def get_size(path=None, path_size=None):
+    def get_size(path=None):
         '''Get file size in kb, mb or gb'''
         KB = 1000
         MB = KB ** 2
         GB = KB ** 3
-        if path and path.is_file():
+        if path is and path.is_file():
             size_in_bytes = path.stat().st_size
         elif path_size:
             size_in_bytes = path_size
@@ -69,6 +69,16 @@ class Explorer:
         '''populates cls.dir_content'''
         for column in path_data[2:]:
             cls.dir_content[column[0]] = column[-1] # latest index is pathname
+
+    @staticmethod
+    def all_files(path: Path):
+        '''
+        walks the path and yields the all files
+        in directory and sub-directories
+        '''
+        for self_path, _, filenames in path.walk():
+            for file in filenames:
+                yield Path(self_path) / file
 
     @classmethod
     def yield_row(cls, iterpath):
