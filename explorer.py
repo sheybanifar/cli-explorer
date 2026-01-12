@@ -2,20 +2,6 @@ from pathlib import Path
 import shutil
 import sys
 import threading
-import concurrent.futures as cc
-
-class CustomThread(threading.Thread):
-    '''This thread is provided to get
-    Explorer's yield_row method as its target
-    and ensure gathering all data from that'''
-
-    def __init__(self, target, *arg, **kwarg):
-        super().__init__(*arg, **kwarg)
-        self.target = target
-        self.result = None
-
-    def run(self):
-        self.result = self.target(self._args[0])
 
 class Explorer:
     try:
@@ -25,7 +11,6 @@ class Explorer:
 
     dir_items_count = None   # Number of listed items
     dir_content = {}   # holding id & name as "Id: Name" pairs
-    dir_size = 0
 
     @staticmethod
     def get_mode(path):
@@ -70,7 +55,6 @@ class Explorer:
             size = f'{size_gb} GB'
         return size
         
-    
     @staticmethod
     def get_pathname(path):
         '''returns name of a dir or file'''
@@ -81,16 +65,6 @@ class Explorer:
             return path.name
 
     @classmethod
-    def get_dir_size(cls):
-        dir_size = 0
-        path_roots = cls.cwd.walk()
-        for item in path_roots:
-            for file in item[-1]:
-                path_obj = item[0] / file
-                dir_size += path_obj.stat().st_size
-        cls.dir_size = cls.get_size(path_size=dir_size)
-
-    @classmethod
     def store_pathnames(cls, path_data):
         '''populates cls.dir_content'''
         for column in path_data[2:]:
@@ -98,7 +72,7 @@ class Explorer:
 
     @classmethod
     def yield_row(cls, iterpath):
-        _id = 1
+        id_ = 1
         path_data = [('Id', 'Mode', 'Date Modified', 'Size', 'Name'),
                     ('--', '-'*4, '-'*13, '-'*4, '-'*4)]
         for path in iterpath:
@@ -107,41 +81,14 @@ class Explorer:
             size = cls.get_size(path)
             name = cls.get_pathname(path)
             path_data.append((
-                str(_id),
+                str(id_),
                 mode,
                 last_modified_time,
                 size,
                 name
             ))
-            _id += 1
+            id_ += 1
         yield path_data
-
-    @classmethod
-    def batch_size(cls, files: list[Path]):     # ProcessPool
-        total = 0
-        for file in files:
-            try:
-                total += file.stat().st_size
-            except (PermissionError, FileNotFoundError):
-                pass
-        return total
-
-    @staticmethod
-    def all_files(path: Path):      # ProcessPool
-        for self_path, _, filenames in path.walk():
-            for file in filenames:
-                yield Path(self_path) / file
-    
-    @staticmethod
-    def chunks(all_files, size):    # ProcessPool
-        chunk = []
-        for i in all_files:
-            chunk.append(i)
-            if len(chunk) == size:
-                yield chunk
-                chunk = []
-        if chunk:
-            yield chunk
 
     @classmethod
     def print_path(cls, path_data):
@@ -160,42 +107,15 @@ class Explorer:
                 print(col[0].ljust(id_column_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
-            print(f'Total size: {cls.dir_size}'.rjust(45))
             print()
 
     @classmethod
     def navigator(cls):
         try:
             iterpath = cls.cwd.iterdir()    # Generator of the path
-            # thread_rows = CustomThread(target=cls.yield_row, args=(iterpath,))
-            thread_total_size = threading.Thread(target=cls.get_dir_size)
-            
-            # thread_rows.start()
-            thread_total_size.start()
-
-            # =================ProcessPool=================
-            # if __name__ == '__main__':
-            #     with cc.ProcessPoolExecutor() as exc:
-            #         BATCH_SIZE = 1000
-            #         all_files = cls.all_files(cls.cwd)
-            #         batches = cls.chunks(all_files, BATCH_SIZE)
-                    
-            #         futures = [exc.submit(cls.batch_size, batch) for batch in batches]
-
-            #         total = 0
-            #         for future in cc.as_completed(futures):
-            #             total += future.result()
-            #         cls.dir_size = cls.get_size(path_size=total)
-
-            # thread_rows.join()
-            thread_total_size.join()
-
-            # cls.print_path(thread_rows.result)
             cls.print_path(cls.yield_row(iterpath))
-
         except FileNotFoundError:
             print('such file or directory does not exist!')
-            print(cls.cwd)
             # cls.navigator()
         except PermissionError:
             print('Access is denied!')
@@ -210,7 +130,6 @@ class Explorer:
             if entry == '':
                 continue
             elif entry == '.':
-                print(cls.cwd)
                 cls.navigator() # Refresh the "cwd"
             elif entry == '..': # Backward navigation
                 directory = cls.cwd.resolve().parent
@@ -236,15 +155,7 @@ class Explorer:
                     directory = Path(entry)
                     if directory.exists() and directory.is_absolute():
                         cls.cwd = directory
-                        print(cls.cwd)
                         cls.navigator()
-
-            # if path.isnumeric():
-            #     for paths in thread.result:
-            #         for item in paths:
-            #             if path == item[0]:
-            #                 if Path(item[-1]).is_dir():
-            #                     cls.cwd = Path(item[-1]).resolve()
     @classmethod
     def run(cls):
         cls.navigator()
