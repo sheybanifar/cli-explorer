@@ -29,16 +29,15 @@ class Explorer:
         return lastModifiedTime
     
     @staticmethod
-    def get_size(path=None):
-        '''Get file size in kb, mb or gb'''
+    def get_size(file: Path = None, folder: Path = None):
+        '''Get size of file & folder in kb, mb or gb'''
         KB = 1000
         MB = KB ** 2
         GB = KB ** 3
-        if path is and path.is_file():
-            size_in_bytes = path.stat().st_size
-        elif path_size:
-            size_in_bytes = path_size
-        
+        if file and file.is_file():
+            size_in_bytes = file.stat().st_size
+        elif folder and folder.is_dir():
+            size_in_bytes = folder.stat().st_size
         else:
             return ''
         
@@ -169,6 +168,9 @@ class Explorer:
     @classmethod
     def run(cls):
         cls.navigator()
+
+class Operator:
+    pass
 
 explorer = Explorer()
 explorer.run()
