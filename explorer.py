@@ -1,5 +1,6 @@
 from pathlib import Path
 import shutil
+import os
 import sys
 import threading
 
@@ -145,6 +146,9 @@ class Explorer:
                 if directory.is_dir():
                     cls.cwd = directory.resolve()
                     cls.navigator()
+            elif entry in ('/n', '/N', '/new', '/NEW'):
+                Operator.make_dir()
+
             elif entry.isnumeric():
                 if int(entry) <= 0:
                     print('Invalid input!')
@@ -170,7 +174,21 @@ class Explorer:
         cls.navigator()
 
 class Operator:
-    pass
+    @classmethod
+    def make_dir(cls):
+        while True:
+            try:
+                pathname = input('Pathname to make: ')
+                if pathname:
+                    new_folder = Explorer.cwd / pathname
+                    new_folder.mkdir()
+                    break
+            except FileNotFoundError:
+                print('Operation was failed!')
+                continue
+            except FileExistsError:
+                print('This name already exists!')
+                continue
 
 explorer = Explorer()
 explorer.run()
