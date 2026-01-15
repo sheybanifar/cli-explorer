@@ -133,6 +133,10 @@ class Explorer:
 
         while True:
             try:
+                message = Operator.message
+                if message:
+                    print(message)
+                    message = None
                 entry = input('Enter pathname or id: ')
             except KeyboardInterrupt:
                 print('\nExiting the program...')
@@ -148,7 +152,8 @@ class Explorer:
                     cls.navigator()
             elif entry in ('/n', '/N', '/new', '/NEW'):
                 Operator.make_dir()
-
+                os.system('cls')
+                cls.navigator()
             elif entry.isnumeric():
                 if int(entry) <= 0:
                     print('Invalid input!')
@@ -174,6 +179,8 @@ class Explorer:
         cls.navigator()
 
 class Operator:
+    message = None
+
     @classmethod
     def make_dir(cls):
         while True:
@@ -182,6 +189,7 @@ class Operator:
                 if pathname:
                     new_folder = Explorer.cwd / pathname
                     new_folder.mkdir()
+                    Operator.message = '=====Folder was created!====='
                     break
             except FileNotFoundError:
                 print('Operation was failed!')
