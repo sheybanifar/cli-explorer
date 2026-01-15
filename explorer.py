@@ -182,15 +182,24 @@ class Operator:
     message = None
 
     @classmethod
+    def validate_name(cls, name:str):
+        if name:
+            stripped_name = name.strip()
+            if name != stripped_name:
+                raise ValueError()
+
+    @classmethod
     def make_dir(cls):
         while True:
             try:
-                pathname = input('Pathname to make: ')
+                pathname = input('New folder name: ')
                 if pathname:
                     new_folder = Explorer.cwd / pathname
                     new_folder.mkdir()
                     Operator.message = '=====Folder was created!====='
                     break
+            except KeyboardInterrupt:
+                break
             except FileNotFoundError:
                 print('Operation was failed!')
                 continue
