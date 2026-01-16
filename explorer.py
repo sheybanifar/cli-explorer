@@ -182,18 +182,29 @@ class Operator:
     message = None
 
     @classmethod
-    def validate_name(cls, name:str):
-        if name:
-            stripped_name = name.strip()
-            if name != stripped_name:
-                raise ValueError()
-
+    def validate_name(cls, name: str):
+        if name == '':
+            print('can\'t be empty!')
+            return False
+        stripped_name = name.strip()
+        if name != stripped_name:
+            print('Impossible name!')
+            return False
+        elif 225 < len(stripped_name):
+            print('it\'s too long! max 224 character.')
+            return False
+        for char in ('|', '<', '>', '\"', '?', '*', ':', '/', '\\'):
+            if char in stripped_name:
+                print('name can\'t contains (| < > " \\ ? / : *)')
+                return False
+        else:
+            return True
     @classmethod
     def make_dir(cls):
         while True:
             try:
                 pathname = input('New folder name: ')
-                if pathname:
+                if cls.validate_name(pathname):
                     new_folder = Explorer.cwd / pathname
                     new_folder.mkdir()
                     Operator.message = '=====Folder was created!====='
@@ -201,7 +212,7 @@ class Operator:
             except KeyboardInterrupt:
                 break
             except FileNotFoundError:
-                print('Operation was failed!')
+                print('Operation failed!')
                 continue
             except FileExistsError:
                 print('This name already exists!')
