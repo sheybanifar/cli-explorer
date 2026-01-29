@@ -136,7 +136,8 @@ class Explorer:
                 message = Operator.message
                 if message:
                     print(message)
-                    message = None
+                    Operator.message = None
+                # print(message)
                 entry = input('Enter pathname or id: ')
             except KeyboardInterrupt:
                 print('\nExiting the program...')
@@ -190,7 +191,7 @@ class Operator:
         if name != stripped_name:
             print('Impossible name!')
             return False
-        elif 225 < len(stripped_name):
+        elif 224 < len(stripped_name):
             print('it\'s too long! max 224 character.')
             return False
         for char in ('|', '<', '>', '\"', '?', '*', ':', '/', '\\'):
