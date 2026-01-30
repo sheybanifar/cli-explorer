@@ -218,6 +218,16 @@ class Operator:
             except FileExistsError:
                 print('This name already exists!')
                 continue
+    @classmethod
+    def rename(cls):
+        while True:
+            try:
+                identifier = input('Enter path\'s Id to rename: ')
+                if identifier in Explorer.dir_content.keys():
+                    # pathname = Explorer.dir_content[identifier]
+                    # path_obj = Explorer.cwd / pathname
+                    # new_path = path_obj.rename(path_obj)
+
 
 explorer = Explorer()
 explorer.run()
