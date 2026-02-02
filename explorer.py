@@ -179,27 +179,28 @@ class Explorer:
     def run(cls):
         cls.navigator()
 
+class OperationError(Exception):
+    pass
+
 class Operator:
     message = None
 
-    @classmethod
-    def validate_name(cls, name: str):
-        if name == '':
-            print('can\'t be empty!')
-            return False
-        stripped_name = name.strip()
-        if name != stripped_name:
-            print('Impossible name!')
-            return False
-        elif 224 < len(stripped_name):
-            print('it\'s too long! max 224 character.')
-            return False
-        for char in ('|', '<', '>', '\"', '?', '*', ':', '/', '\\'):
-            if char in stripped_name:
-                print('name can\'t contains (| < > " \\ ? / : *)')
-                return False
-        else:
-            return True
+
+    @staticmethod
+    def validate_name(name: str):
+        if not name:
+            OperationError('Name can\'t be empty!')
+        if name != name.strip():
+            OperationError('Invalid name!')
+        if 224 < len(name):
+            OperationError('it\'s too long! max 224 character.')
+
+        forbidden = ('|', '<', '>', '\"', '?', '*', ':', '/', '\\')
+        for char in forbidden:
+            if char in name:
+                OperationError('Name can\'t contains (| < > " \\ ? / : *)')
+        return True
+    
     @classmethod
     def make_dir(cls):
         while True:
