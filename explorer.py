@@ -185,7 +185,6 @@ class OperationError(Exception):
 class Operator:
     message = None
 
-
     @staticmethod
     def validate_name(name: str):
         if not name:
@@ -202,23 +201,27 @@ class Operator:
         return True
     
     @classmethod
-    def make_dir(cls):
-        while True:
-            try:
-                pathname = input('New folder name: ')
-                if cls.validate_name(pathname):
-                    new_folder = Explorer.cwd / pathname
-                    new_folder.mkdir()
-                    Operator.message = '=====Folder was created!====='
-                    break
-            except KeyboardInterrupt:
-                break
-            except FileNotFoundError:
-                print('Operation failed!')
-                continue
-            except FileExistsError:
-                print('This name already exists!')
-                continue
+    def make_dir(cls, base_path: Path, name: str):
+        cls.validate_name(name)
+        new_folder = base_path / name
+        new_folder.mkdir()
+        return new_folder
+        # while True:
+        #     try:
+        #         pathname = input('New folder name: ')
+        #         if cls.validate_name(pathname):
+        #             new_folder = Explorer.cwd / pathname
+        #             new_folder.mkdir()
+        #             Operator.message = '=====Folder was created!====='
+        #             break
+        #     except KeyboardInterrupt:
+        #         break
+        #     except FileNotFoundError:
+        #         print('Operation failed!')
+        #         continue
+        #     except FileExistsError:
+        #         print('This name already exists!')
+        #         continue
     @classmethod
     def rename(cls):
         while True:
