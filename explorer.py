@@ -162,21 +162,27 @@ class Explorer:
                         Operator.validate_name(new_name)
                         Operator.make_dir(Explorer.cwd, new_name)
                     except OperationError as op:
+                        cls.operation_message = op.args[0]
                         print(op)
                         chance -= 1
                         continue
                     except FileExistsError as exists_err:
-                        print(exists_err)
+                        cls.operation_message = 'Name already exists!'
+                        print(cls.operation_message)
                         chance -= 1
                         continue
+                    except KeyboardInterrupt:
+                        break
                     except Exception as e:
-                        print(f'{type(e)}: {print(e)}')
-                        # raise
+                        cls.operation_message = 'Unexpected error occurred!'
+                        print(type(e), e)
+                        chance -= 1
+                        continue
                     else:
                         os.system('cls')
-                        cls.operation_message = '=====Folder was created!====='
-                        cls.navigator()
-
+                        cls.operation_message = '===== Folder was created! ====='
+                        continue
+                continue
             elif entry.isnumeric():
                 if int(entry) <= 0:
                     print('Invalid input!')
@@ -210,16 +216,16 @@ class Operator:
     @staticmethod
     def validate_name(name: str):
         if not name:
-            OperationError('Name can\'t be empty!')
+            raise OperationError('Name can\'t be empty!')
         if name != name.strip():
-            OperationError('Invalid name!')
+            raise OperationError('Invalid name!')
         if 224 < len(name):
-            OperationError('it\'s too long! max 224 character.')
+            raise OperationError('it\'s too long! max 224 character.')
 
         forbidden = ('|', '<', '>', '\"', '?', '*', ':', '/', '\\')
         for char in forbidden:
             if char in name:
-                OperationError('Name can\'t contains | < > " \\ ? / : *')
+                raise OperationError('Name can\'t contains | < > " \\ ? / : *')
         return True
     
     @classmethod
