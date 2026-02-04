@@ -12,6 +12,7 @@ class Explorer:
 
     dir_items_count = None   # Number of listed items
     dir_content = {}   # holding id & name as "Id: Name" pairs
+    operation_message = None
 
     @staticmethod
     def get_mode(path):
@@ -133,10 +134,9 @@ class Explorer:
 
         while True:
             try:
-                message = Operator.message
-                if message:
-                    print(message)
-                    Operator.message = None
+                if cls.operation_message:
+                    print(cls.operation_message)
+                    cls.operation_message = None
                 # print(message)
                 entry = input('Enter pathname or id: ')
             except KeyboardInterrupt:
@@ -152,9 +152,28 @@ class Explorer:
                     cls.cwd = directory.resolve()
                     cls.navigator()
             elif entry in ('/n', '/N', '/new', '/NEW'):
-                Operator.make_dir()
-                os.system('cls')
-                cls.navigator()
+                chance = 3
+                while chance > 0:
+                    try:
+                        new_name = input('Enter new name: ')
+                        Operator.validate_name(new_name)
+                        Operator.make_dir(Explorer.cwd, new_name)
+                    except OperationError as op:
+                        print(op)
+                        chance -= 1
+                        continue
+                    except FileExistsError as exists_err:
+                        print(exists_err)
+                        chance -= 1
+                        continue
+                    except Exception as e:
+                        print(f'{type(e)}: {print(e)}')
+                        raise
+                    else:
+                        os.system('cls')
+                        cls.operation_message = '=====Folder was created!====='
+                        cls.navigator()
+
             elif entry.isnumeric():
                 if int(entry) <= 0:
                     print('Invalid input!')
@@ -197,7 +216,7 @@ class Operator:
         forbidden = ('|', '<', '>', '\"', '?', '*', ':', '/', '\\')
         for char in forbidden:
             if char in name:
-                OperationError('Name can\'t contains (| < > " \\ ? / : *)')
+                OperationError('Name can\'t contains | < > " \\ ? / : *')
         return True
     
     @classmethod
@@ -222,15 +241,15 @@ class Operator:
         #     except FileExistsError:
         #         print('This name already exists!')
         #         continue
-    @classmethod
-    def rename(cls):
-        while True:
-            try:
-                identifier = input('Enter path\'s Id to rename: ')
-                if identifier in Explorer.dir_content.keys():
-                    # pathname = Explorer.dir_content[identifier]
-                    # path_obj = Explorer.cwd / pathname
-                    # new_path = path_obj.rename(path_obj)
+    # @classmethod
+    # def rename(cls):
+    #     while True:
+    #         try:
+    #             identifier = input('Enter path\'s Id to rename: ')
+    #             if identifier in Explorer.dir_content.keys():
+    #                 # pathname = Explorer.dir_content[identifier]
+    #                 # path_obj = Explorer.cwd / pathname
+    #                 # new_path = path_obj.rename(path_obj)
 
 
 explorer = Explorer()
