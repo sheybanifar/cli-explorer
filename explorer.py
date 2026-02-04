@@ -122,35 +122,38 @@ class Explorer:
 
     @classmethod
     def navigator(cls):
-        try:
-            iterpath = cls.cwd.iterdir()    # Generator of the path
-            cls.print_path(cls.yield_row(iterpath))
-        except FileNotFoundError:
-            print('such file or directory does not exist!')
-            # cls.navigator()
-        except PermissionError:
-            print('Access is denied!')
-            cls.cwd = cls.cwd.resolve().parent
-
+        '''This method is responsible for updating Explorer's cwd attribute
+        dynamically after every navigation and call to Explorer's print_path
+        to display content of that directory.'''
         while True:
+            try:
+                iterpath = cls.cwd.iterdir()    # Generator of the path
+                cls.print_path(cls.yield_row(iterpath))
+            except FileNotFoundError:
+                print('such file or directory does not exist!')
+                # cls.navigator()
+            except PermissionError:
+                print('Access is denied!')
+                cls.cwd = cls.cwd.resolve().parent
+
             try:
                 if cls.operation_message:
                     print(cls.operation_message)
                     cls.operation_message = None
-                # print(message)
-                entry = input('Enter pathname or id: ')
+                entry = input('Prompt -> ')
             except KeyboardInterrupt:
                 print('\nExiting the program...')
                 exit()
-            if entry == '':
+
+            if entry == '' or entry == '.':
+                # Refresh the "cwd"
                 continue
-            elif entry == '.':
-                cls.navigator() # Refresh the "cwd"
-            elif entry == '..': # Backward navigation
+            elif entry == '..':
+                # Backward navigation
                 directory = cls.cwd.resolve().parent
                 if directory.is_dir():
                     cls.cwd = directory.resolve()
-                    cls.navigator()
+                    continue
             elif entry in ('/n', '/N', '/new', '/NEW'):
                 chance = 3
                 while chance > 0:
@@ -168,7 +171,7 @@ class Explorer:
                         continue
                     except Exception as e:
                         print(f'{type(e)}: {print(e)}')
-                        raise
+                        # raise
                     else:
                         os.system('cls')
                         cls.operation_message = '=====Folder was created!====='
@@ -183,17 +186,17 @@ class Explorer:
                     directory = cls.cwd / cls.dir_content[entry]
                     if directory.is_dir():
                         cls.cwd = directory.resolve()
-                        cls.navigator()
+                        continue
             else:
                 if entry in cls.dir_content.values():
                     cls.cwd = cls.cwd / entry
-                    cls.navigator()
+                    continue
                 else:
-                    # if an absolute dir with drive letter had been given; navigate it
+                    # if an absolute path with drive letter had been passed; navigate it
                     directory = Path(entry)
                     if directory.exists() and directory.is_absolute():
                         cls.cwd = directory
-                        cls.navigator()
+                        continue
     @classmethod
     def run(cls):
         cls.navigator()
