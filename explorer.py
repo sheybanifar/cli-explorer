@@ -31,17 +31,15 @@ class Explorer:
         return lastModifiedTime
     
     @staticmethod
-    def get_size(file: Path = None, folder: Path = None):
+    def get_size(path: Path):
         '''Get size of file & folder in kb, mb or gb'''
         KB = 1000
         MB = KB ** 2
         GB = KB ** 3
-        if file and file.is_file():
-            size_in_bytes = file.stat().st_size
-        elif folder and folder.is_dir():
-            size_in_bytes = folder.stat().st_size
-        else:
-            return ''
+        if path.is_file():
+            size_in_bytes = path.stat().st_size
+        elif path.is_dir():
+            pass
         
         if size_in_bytes < KB:
             size = f'{size_in_bytes} B'
@@ -82,7 +80,7 @@ class Explorer:
                 yield Path(self_path) / file
 
     @classmethod
-    def yield_row(cls, iterpath):
+    def build_row(cls, iterpath):
         id_ = 1
         path_data = [('Id', 'Mode', 'Date Modified', 'Size', 'Name'),
                     ('--', '-'*4, '-'*13, '-'*4, '-'*4)]
@@ -99,22 +97,23 @@ class Explorer:
                 name
             ))
             id_ += 1
-        yield path_data
+        return path_data
 
     @classmethod
     def print_path(cls, path_data):
-        for tuple in path_data:
-            if len(tuple) < 10:
+        cls.dir_content.clear() # Clear it before new items addition
+        for row in path_data:
+            if len(row) < 10:
                 id_column_length = 2
             else:
-                id_column_length = len(str(len(tuple)))
-            cls.dir_items_count = len(tuple) - 2  # number of dir content
-            cls.store_pathnames(tuple)
-            max_len_name = max(len(col[-1]) for col in tuple) + 1
+                id_column_length = len(str(len(row)))
+            cls.dir_items_count = len(row) - 2  # number of dir content
+            cls.store_pathnames(row)
+            max_len_name = max(len(col[-1]) for col in row) + 1
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
             print()
-            for col in tuple:
+            for col in row:
                 print(col[0].ljust(id_column_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
@@ -123,12 +122,12 @@ class Explorer:
     @classmethod
     def navigator(cls):
         '''This method is responsible for updating Explorer's cwd attribute
-        dynamically after every navigation and call to Explorer's print_path
+        dynamically after every navigation and calling Explorer's print_path
         to display content of that directory.'''
         while True:
             try:
                 iterpath = cls.cwd.iterdir()    # Generator of the path
-                cls.print_path(cls.yield_row(iterpath))
+                cls.print_path(cls.build_row(iterpath))
             except FileNotFoundError:
                 print('such file or directory does not exist!')
                 # cls.navigator()
