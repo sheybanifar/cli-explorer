@@ -39,7 +39,7 @@ class Explorer:
         if path.is_file():
             size_in_bytes = path.stat().st_size
         elif path.is_dir():
-            pass
+            return ''
         
         if size_in_bytes < KB:
             size = f'{size_in_bytes} B'
@@ -64,10 +64,10 @@ class Explorer:
             return path.name
 
     @classmethod
-    def store_pathnames(cls, path_data):
+    def store_pathnames(cls, rows):
         '''populates cls.dir_content'''
-        for column in path_data[2:]:
-            cls.dir_content[column[0]] = column[-1] # latest index is pathname
+        for row in rows:
+            cls.dir_content[row[0]] = row[-1] # latest index is pathname
 
     @staticmethod
     def all_files(path: Path):
@@ -82,14 +82,14 @@ class Explorer:
     @classmethod
     def build_row(cls, iterpath):
         id_ = 1
-        path_data = [('Id', 'Mode', 'Date Modified', 'Size', 'Name'),
+        rows = [('Id', 'Mode', 'Date Modified', 'Size', 'Name'),
                     ('--', '-'*4, '-'*13, '-'*4, '-'*4)]
         for path in iterpath:
             mode = cls.get_mode(path)
             last_modified_time = cls.get_last_modified_time(path)
             size = cls.get_size(path)
             name = cls.get_pathname(path)
-            path_data.append((
+            rows.append((
                 str(id_),
                 mode,
                 last_modified_time,
@@ -97,24 +97,25 @@ class Explorer:
                 name
             ))
             id_ += 1
-        return path_data
+        return rows
 
     @classmethod
-    def print_path(cls, path_data):
+    def print_path(cls, rows):
         cls.dir_content.clear() # Clear it before new items addition
-        for row in path_data:
-            if len(row) < 10:
-                id_column_length = 2
-            else:
-                id_column_length = len(str(len(row)))
+        if len(row) < 10:
+            id_column_length = 2
+        else:
+            id_column_length = len(str(len(row)))
+        max_len_name = max(len(col[-1]) for col for row in rows) + 1
+        cls.store_pathnames(rows[2:])
+        for row in rows:
             cls.dir_items_count = len(row) - 2  # number of dir content
-            cls.store_pathnames(row)
-            max_len_name = max(len(col[-1]) for col in row) + 1
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
             print()
-            for col in row:
-                print(col[0].ljust(id_column_length), col[1].center(9), col[2].rjust(18), col[3].rjust(8), col[4].ljust(max_len_name))
+            # for col in row:
+                # print(col)
+            print(row[0].ljust(id_column_length), row[1].center(9), row[2].rjust(18), row[3].rjust(8), row[4].ljust(max_len_name))
             print()
             print(f'Directory: {cls.cwd}'.rjust(45))
             print()
