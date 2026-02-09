@@ -128,6 +128,7 @@ class Explorer:
         dynamically after every navigation and calling Explorer's print_path
         to display content of that directory.'''
         while True:
+            os.system('cls')
             try:
                 iterpath = cls.cwd.iterdir()    # Generator of the path
                 cls.print_path(cls.build_row(iterpath))
@@ -163,39 +164,70 @@ class Explorer:
                         new_name = input('Enter new name: ')
                         Operator.make_dir(Explorer.cwd, new_name)
                     except OperationError as op:
+                        chance -= 1
                         cls.operation_message = op.args[0]
                         print(op)
-                        chance -= 1
                         continue
-                    except FileExistsError as exists_err:
+                    except FileExistsError:
+                        chance -= 1
                         cls.operation_message = 'Name already exists!'
                         print(cls.operation_message)
-                        chance -= 1
                         continue
                     except KeyboardInterrupt:
                         break
                     except Exception as e:
-                        cls.operation_message = 'Unexpected error occurred!'
-                        print(type(e), e)
                         chance -= 1
+                        cls.operation_message = 'Unexpected error occurred!'
+                        print(type(e), e) # can be used for logging
                         continue
                     else:
-                        os.system('cls')
-                        cls.operation_message = '===== Folder was created! ====='
+                        cls.operation_message = '====<<( Folder was created! )>>===='
                         break
                 continue
             elif entry in ('/r', '/R', '/rename', '/RENAME'):
                 try:
                     id_ = input('Enter Id to rename: ')
-                    if id_ not in cls.dir_content:
-                        cls.operation_message = '==< Could not found this id! >=='
-                        continue
-                    else:
-                        corresponding_name = cls.dir_content[id_]
-                        # check path existing??
-                        current_path = cls.cwd / corresponding_name
                 except (KeyboardInterrupt, EOFError):
                     continue
+
+                if id_ not in cls.dir_content:
+                    cls.operation_message = '==< Could not found this id! >=='
+                    continue
+                else:
+                    corresponding_name = cls.dir_content[id_]
+                    current_path = cls.cwd / corresponding_name
+                    if current_path.exists():
+                        chance = 3
+                        while chance > 0:
+                            try:
+                                new_name = input('Enter new name: ')
+                                Operator.rename(current_path, new_name)
+                            except OperationError as op:
+                                chance -= 1
+                                cls.operation_message = op.args[0]
+                                print(op)
+                                continue
+                            except FileExistsError:
+                                chance -= 1
+                                cls.operation_message = 'Name already exists!'
+                                print(cls.operation_message)
+                                continue
+                            except FileNotFoundError:
+                                chance -= 1
+                                cls.operation_message = f'Intended name "{corresponding_name}" is missing!'
+                                print(cls.operation_message)
+                                continue
+                            except (KeyboardInterrupt, EOFError):
+                                break
+                            except Exception as e:
+                                chance -= 1
+                                cls.operation_message = f'{e.__class__.__name__} -->> {e}'
+                                print(cls.operation_message)
+                                continue
+                            else:
+                                cls.operation_message = '====<<( Entry was renamed! )>>===='
+                                break
+                        continue
 
             elif entry.isnumeric():
                 if int(entry) <= 0:
@@ -250,10 +282,10 @@ class Operator:
         return new_folder
 
     @classmethod
-    def rename(cls, current_name: Path, new_name: str):
+    def rename(cls, current_path: Path, new_name: str):
         cls.validate_name(new_name)
-        new_path = current_name.parent / new_name
-        return current_name.rename(new_path)
+        new_path = current_path.parent / new_name
+        return current_path.rename(new_path)
 
 
     # @classmethod
