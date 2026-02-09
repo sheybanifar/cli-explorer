@@ -161,7 +161,6 @@ class Explorer:
                 while chance > 0:
                     try:
                         new_name = input('Enter new name: ')
-                        Operator.validate_name(new_name)
                         Operator.make_dir(Explorer.cwd, new_name)
                     except OperationError as op:
                         cls.operation_message = op.args[0]
@@ -183,7 +182,7 @@ class Explorer:
                     else:
                         os.system('cls')
                         cls.operation_message = '===== Folder was created! ====='
-                        continue
+                        break
                 continue
             elif entry.isnumeric():
                 if int(entry) <= 0:
