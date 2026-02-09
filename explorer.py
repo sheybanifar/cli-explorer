@@ -184,6 +184,19 @@ class Explorer:
                         cls.operation_message = '===== Folder was created! ====='
                         break
                 continue
+            elif entry in ('/r', '/R', '/rename', '/RENAME'):
+                try:
+                    id_ = input('Enter Id to rename: ')
+                    if id_ not in cls.dir_content:
+                        cls.operation_message = '==< Could not found this id! >=='
+                        continue
+                    else:
+                        corresponding_name = cls.dir_content[id_]
+                        # check path existing??
+                        current_path = cls.cwd / corresponding_name
+                except (KeyboardInterrupt, EOFError):
+                    continue
+
             elif entry.isnumeric():
                 if int(entry) <= 0:
                     print('Invalid input!')
@@ -235,6 +248,13 @@ class Operator:
         new_folder = base_path / name
         new_folder.mkdir()
         return new_folder
+
+    @classmethod
+    def rename(cls, current_name: Path, new_name: str):
+        cls.validate_name(new_name)
+        new_path = current_name.parent / new_name
+        return current_name.rename(new_path)
+
 
     # @classmethod
     # def rename(cls):
