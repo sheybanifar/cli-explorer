@@ -102,23 +102,25 @@ class Explorer:
     @classmethod
     def print_path(cls, rows):
         cls.dir_content.clear() # Clear it before new items addition
-        if len(row) < 10:
+        if len(rows) < 10:
             id_column_length = 2
         else:
-            id_column_length = len(str(len(row)))
-        max_len_name = max(len(col[-1]) for col for row in rows) + 1
+            id_column_length = len(str(len(rows)))
+
+        max_len_name = max(len(row[-1]) for row in rows) + 1
         cls.store_pathnames(rows[2:])
+
+        # cls.dir_items_count = len(row) - 2  # number of dir content
+        print()
+        print(f'Directory: {cls.cwd}'.rjust(45))
+        print()
+
         for row in rows:
-            cls.dir_items_count = len(row) - 2  # number of dir content
-            print()
-            print(f'Directory: {cls.cwd}'.rjust(45))
-            print()
-            # for col in row:
-                # print(col)
             print(row[0].ljust(id_column_length), row[1].center(9), row[2].rjust(18), row[3].rjust(8), row[4].ljust(max_len_name))
-            print()
-            print(f'Directory: {cls.cwd}'.rjust(45))
-            print()
+        
+        print()
+        print(f'Directory: {cls.cwd}'.rjust(45))
+        print()
 
     @classmethod
     def navigator(cls):
