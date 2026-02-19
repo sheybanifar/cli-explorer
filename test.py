@@ -100,30 +100,30 @@
 # =======================================
 # SuperFastPython.com
 # example of waiting for tasks to complete in the process pool
-from time import sleep
-from random import random
-from concurrent.futures import ProcessPoolExecutor
-from concurrent.futures import wait
+# from time import sleep
+# from random import random
+# from concurrent.futures import ProcessPoolExecutor
+# from concurrent.futures import wait
  
-# custom task that will sleep for a variable amount of time
-def task(name):
-    # sleep for less than a second
-    sleep(random())
-    print(f'Done: {name}')
+# # custom task that will sleep for a variable amount of time
+# def task(name):
+#     # sleep for less than a second
+#     sleep(random())
+#     print(f'Done: {name}')
  
-# entry point
-if __name__ == '__main__':
-    # start the process pool
-    with ProcessPoolExecutor(2) as executor:
-        # submit tasks and collect futures
-        futures = [executor.submit(task, i) for i in range(10)]
-        # wait for all tasks to complete
-        print('Waiting for tasks to complete...')
-        # ff = wait(futures,)
-        # print(*ff)
-        executor.shutdown(wait=False,)
-        print('All tasks are done!')
-    print('this is from put of the context manager')
+# # entry point
+# if __name__ == '__main__':
+#     # start the process pool
+#     with ProcessPoolExecutor(2) as executor:
+#         # submit tasks and collect futures
+#         futures = [executor.submit(task, i) for i in range(10)]
+#         # wait for all tasks to complete
+#         print('Waiting for tasks to complete...')
+#         # ff = wait(futures,)
+#         # print(*ff)
+#         executor.shutdown(wait=False,)
+#         print('All tasks are done!')
+#     print('this is from put of the context manager')
 
 # ==========================================
 
@@ -134,3 +134,25 @@ if __name__ == '__main__':
 # print(p.is_absolute())
 # print(p.drive)
 # print(p)
+
+# ==========================================
+
+import shutil
+from pathlib import Path
+
+dst = Path('../test2')
+
+def ccopy():
+    input_source = input('Sources: ')
+    source = input_source.split(' ')
+
+    for i in source:
+        i = i.strip()
+        src = Path('../test') / i
+        if src.is_file():
+            shutil.copy(src, dst)
+        elif src.is_dir():
+            shutil.copytree(src, dst)
+        print(f'{src.name} was copied!')
+
+ccopy()
