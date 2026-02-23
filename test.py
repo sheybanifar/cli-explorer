@@ -143,6 +143,7 @@ from pathlib import Path
 dst = Path('../test2')
 
 def ccopy():
+    global dst
     input_source = input('Sources: ')
     source = input_source.split(' ')
 
@@ -152,7 +153,8 @@ def ccopy():
         if src.is_file():
             shutil.copy(src, dst)
         elif src.is_dir():
-            shutil.copytree(src, dst)
+            dst_temp = dst / src.name
+            shutil.copytree(src, dst_temp, copy_function=shutil.copy, dirs_exist_ok=False)
         print(f'{src.name} was copied!')
 
 ccopy()
