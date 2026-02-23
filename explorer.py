@@ -145,6 +145,7 @@ class Explorer:
                     cls.operation_message = None
                 entry = input('Prompt -> ')
             except KeyboardInterrupt:
+                os.system('cls')
                 print('\nExiting the program...')
                 exit()
 
@@ -229,6 +230,9 @@ class Explorer:
                                 break
                         continue
 
+            elif entry in ('/c', '/C', '/copy', '/COPY'):
+                pass
+
             elif entry.isnumeric():
                 if int(entry) <= 0:
                     print('Invalid input!')
@@ -274,6 +278,12 @@ class Operator:
                 raise OperationError('Name can\'t contains | < > " \\ ? / : *')
         return True
     
+    @staticmethod
+    def validate_id(user_input: str):
+        items_temp = user_input.split(' ')
+        items = list(dict.fromkeys(items_temp))
+        for item in items:
+            item = item.strip()
     @classmethod
     def make_dir(cls, base_path: Path, name: str):
         cls.validate_name(name)
@@ -287,17 +297,8 @@ class Operator:
         new_path = current_path.parent / new_name
         return current_path.rename(new_path)
 
-
-    # @classmethod
-    # def rename(cls):
-    #     while True:
-    #         try:
-    #             identifier = input('Enter path\'s Id to rename: ')
-    #             if identifier in Explorer.dir_content.keys():
-    #                 # pathname = Explorer.dir_content[identifier]
-    #                 # path_obj = Explorer.cwd / pathname
-    #                 # new_path = path_obj.rename(path_obj)
-
-
+    @classmethod
+    def copy(cls, source_list):
+        pass
 explorer = Explorer()
 explorer.run()
